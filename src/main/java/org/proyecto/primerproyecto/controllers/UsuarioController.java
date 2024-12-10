@@ -3,17 +3,18 @@ package org.proyecto.primerproyecto.controllers;
 import org.proyecto.primerproyecto.models.Usuario;
 import org.proyecto.primerproyecto.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 
     @Autowired
@@ -31,20 +32,8 @@ public class UsuarioController {
         return usuario.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/create/{username}/{password}/{nombre}/{email}/{edad}")
-    public void createUser(@PathVariable String username,
-                           @PathVariable String password,
-                           @PathVariable String nombre,
-                           @PathVariable String email,
-                           @PathVariable int edad) {
-
-        Usuario usuario = new Usuario();
-        usuario.setUsername(username);
-        usuario.setPassword(password);
-        usuario.setNombre(nombre);
-        usuario.setEmail(email);
-        usuario.setEdad(edad);
-
+    @PostMapping("/create")
+    public void createUser(@RequestBody Usuario usuario) {
         this.usuarioService.createUser(usuario);
     }
 
@@ -53,5 +42,10 @@ public class UsuarioController {
         this.usuarioService.delete(id);
     }
 
-
+    @GetMapping("/status")
+    public Map<String, String> checkStatus() {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "conexión establecida");
+        return response;
+    }
 }
